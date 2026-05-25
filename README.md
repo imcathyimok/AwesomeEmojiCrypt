@@ -1,8 +1,11 @@
-# EmojiCrypt
+<img width="1129" height="622" alt="image" src="https://github.com/user-attachments/assets/2f51aae6-fcea-4dce-b1b9-f79acf5b48d9" /># EmojiCrypt
+
+<img width="1673" height="793" alt="image" src="https://github.com/user-attachments/assets/cd72acd1-0038-4b11-9409-c5fc04047b64" />
+
 
 EmojiCrypt is a vocabulary-learning web app that turns word lists into emoji-based study cards.
 
-Built for the **Beneath the Surface** theme, the app is designed around one simple idea: learners first see a surface-level clue (emojis), then uncover deeper meaning (definition + explanation).
+The app is designed around one simple idea: learners first see a surface-level clue (emojis), then uncover deeper meaning (definition + explanation).
 
 ---
 
@@ -22,8 +25,6 @@ This makes review more active and easier to remember.
 
 ## Theme connection: Beneath the Surface
 
-The theme is part of the product design, not just the title.
-
 In each card flow:
 
 1. You see emojis first (surface).
@@ -42,7 +43,13 @@ Given a topic and list of words, EmojiCrypt generates for each word:
 - a concise definition,
 - and an explanation of the clue.
 
+<img width="1130" height="619" alt="image" src="https://github.com/user-attachments/assets/2853043f-fa77-4d45-8949-e466eefd4474" />
+<img width="1128" height="622" alt="image" src="https://github.com/user-attachments/assets/46a89b77-0bf3-46d7-a72d-fd9f1d4671b8" />
+<img width="1129" height="622" alt="image" src="https://github.com/user-attachments/assets/85804663-b968-4d0d-af1f-10f06d831c9d" />
+
+
 Then it presents the results in interactive study modes.
+<img width="1132" height="697" alt="image" src="https://github.com/user-attachments/assets/91ebb781-ac9c-4207-b537-2fdf3f207d93" />
 
 ---
 
@@ -57,6 +64,11 @@ Then it presents the results in interactive study modes.
 ---
 
 ## How to use
+<img width="1130" height="777" alt="image" src="https://github.com/user-attachments/assets/d8c98536-77db-4fbf-b0ca-0dd4d0dc126a" />
+<img width="1133" height="618" alt="image" src="https://github.com/user-attachments/assets/1dc542d9-a1ed-4c4d-a0bb-21593cb22236" />
+<img width="1132" height="557" alt="image" src="https://github.com/user-attachments/assets/342de3c9-1523-41ad-9d50-471220d35b97" />
+<img width="1136" height="531" alt="image" src="https://github.com/user-attachments/assets/1c262885-4741-4f5f-ad99-381ed7b1ee1b" />
+<img width="897" height="761" alt="image" src="https://github.com/user-attachments/assets/cab55f10-9441-4798-9dfd-d1676de28878" />
 
 1. Enter a topic and vocabulary words.
 2. Generate a study session.
@@ -100,12 +112,3 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
-
----
-
-## Notes
-
-- Keep `.env.local` private.
-- Do not commit `.next` or `node_modules`.
-- If deployment fails, run `npm run build` locally first to catch type/lint issues.
-
