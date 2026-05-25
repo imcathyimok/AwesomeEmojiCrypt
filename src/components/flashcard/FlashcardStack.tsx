@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Session } from "@/types";
-import { useCardProgress } from "@/hooks/useCardProgress";
+import { useCardProgress, type CardViewState } from "@/hooks/useCardProgress";
 import Flashcard from "./Flashcard";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { useSession } from "@/contexts/SessionContext";
@@ -81,7 +81,7 @@ export default function FlashcardStack({ session }: { session: Session }) {
       ) : (
         <Flashcard
           word={current}
-          state={states[index]}
+          state={(states[index] === "unseen" ? "unseen" : states[index]) as CardViewState}
           onRequestHint={() => setCardState(index, "hint")}
           onRevealAnswer={() => setCardState(index, "flipped")}
           onMastered={() => markAndAdvance(true)}
