@@ -77,13 +77,7 @@ export default function Flashcard({ word, state, onRequestHint, onRevealAnswer, 
           </button>
         )}
         {state === "flipped" && (
-          <>
-            <div className="flex flex-wrap justify-center gap-2">
-              <button className="h-12 rounded-xl border px-5 text-lg" onClick={onMastered} type="button">👍 Mastered</button>
-              <button className="h-12 rounded-xl border px-5 text-lg" onClick={onReview} type="button">👎 Need Review</button>
-            </div>
-            <button className="h-12 rounded-xl border px-5 text-lg" onClick={onNext} type="button">Next</button>
-          </>
+          <button className="h-12 rounded-xl border px-5 text-lg" onClick={onNext} type="button">Next</button>
         )}
       </div>
     </div>
