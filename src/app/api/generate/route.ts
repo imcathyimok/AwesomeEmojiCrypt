@@ -5,6 +5,8 @@ type RelayResponse = {
   vocabulary?: Array<{ word?: string; definition?: string; emojis?: string; explanation?: string }>;
 };
 
+type ChatCompletionPayload = Record<string, unknown>;
+
 const systemPrompt = `You are EmojiCrypt, an AI that creates memorable emoji associations for vocabulary learning. Your purpose is to help students remember words by creating visual, emoji-based mnemonics that reveal the "meaning beneath the surface."
 
 Given a topic and a list of vocabulary words, generate emoji sequences, definitions, and explanations for each word.
@@ -77,9 +79,25 @@ async function callRelayChatCompletions(
   });
 }
 
-type ChatCompletionPayload = Record<string, unknown>;
+function safeJsonParse(text: string): ChatCompletionPayload | null {
+  try {
+    return JSON.parse(text) as ChatCompletionPayload;
+  } catch {
+    return null;
+  }
+}
 
-function extractTextFromChatCompletionsPayload(payload: ChatCompletionPayload): string | null {
+function extractFirstJsonObject(text: string): RelayResponse | null {
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[0]) as RelayResponse;
+  } catch {
+    return null;
+  }
+}
+
+function extractTextFromPayload(payload: ChatCompletionPayload): string | null {
   const candidates: unknown[] = [
     payload.text,
     payload.output_text,
@@ -94,12 +112,13 @@ function extractTextFromChatCompletionsPayload(payload: ChatCompletionPayload): 
 
   const walk = (value: unknown): string | null => {
     if (value == null || visited.has(value)) return null;
+
     if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (!trimmed) return null;
-      if (trimmed.startsWith("{") || trimmed.startsWith("[")) return trimmed;
-      return null;
+      const t = value.trim();
+      if (!t) return null;
+      return t;
     }
+
     if (typeof value !== "object") return null;
     visited.add(value);
 
@@ -111,9 +130,9 @@ function extractTextFromChatCompletionsPayload(payload: ChatCompletionPayload): 
       return null;
     }
 
-    const record = value as Record<string, unknown>;
-    for (const key of ["text", "content", "message", "output_text", "response", "output", "choices"]) {
-      const found = walk(record[key]);
+    const obj = value as Record<string, unknown>;
+    for (const key of ["text", "content", "message", "output_text", "response", "output", "choices", "delta"]) {
+      const found = walk(obj[key]);
       if (found) return found;
     }
 
@@ -126,6 +145,24 @@ function extractTextFromChatCompletionsPayload(payload: ChatCompletionPayload): 
   }
 
   return null;
+}
+
+function getUpstreamError(payload: ChatCompletionPayload | null, rawText: string, status: number): string {
+  if (payload) {
+    const err = payload.error as Record<string, unknown> | undefined;
+    const errMsg = typeof err?.message === "string" ? err.message : null;
+    const topMsg = typeof payload.message === "string" ? payload.message : null;
+    const reqId =
+      (typeof err?.request_id === "string" && err.request_id) ||
+      (typeof payload.request_id === "string" && payload.request_id) ||
+      "unknown";
+
+    if (errMsg || topMsg) {
+      return `${errMsg ?? topMsg} (status: ${status}, request id: ${reqId})`;
+    }
+  }
+
+  return `Upstream error (status: ${status}). Raw: ${rawText.slice(0, 500)}`;
 }
 
 export async function POST(req: Request) {
@@ -149,35 +186,41 @@ export async function POST(req: Request) {
     const userPrompt = `Generate a vocabulary flashcard set for the topic "${topic}". Words: ${words.join(", ")}.`;
 
     let res = await callRelayChatCompletions(apiUrl, apiKey, model, userPrompt, "bearer");
-
     if (!res.ok && (res.status === 401 || res.status === 403)) {
       res = await callRelayChatCompletions(apiUrl, apiKey, model, userPrompt, "x-api-key");
     }
 
-    const payload = await res.json().catch(() => ({}));
+    const rawText = await res.text();
+    const payload = safeJsonParse(rawText);
 
     if (!res.ok) {
-      const requestId =
-        payload?.error?.request_id ||
-        payload?.request_id ||
-        payload?.error?.message?.match(/request id:\s*([^\)]+)/i)?.[1] ||
-        "unknown";
-      const message = payload?.error?.message || payload?.message || "Upstream error";
-      return NextResponse.json({ error: `${message} (request id: ${requestId})` }, { status: res.status });
+      return NextResponse.json({ error: getUpstreamError(payload, rawText, res.status) }, { status: res.status });
     }
 
-    const rawText = extractTextFromChatCompletionsPayload(payload);
-    if (!rawText) {
-      return NextResponse.json({ error: "No model response text in relay payload." }, { status: 502 });
+    const extractedText = payload ? extractTextFromPayload(payload) : null;
+
+    let parsed: RelayResponse | null = null;
+
+    if (extractedText) {
+      parsed = safeJsonParse(extractedText) as RelayResponse | null;
+      if (!parsed) parsed = extractFirstJsonObject(extractedText);
     }
 
-    let parsed: RelayResponse;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch {
-      const fenced = rawText.match(/\{[\s\S]*\}/);
-      if (!fenced) return NextResponse.json({ error: "Model response is not valid JSON." }, { status: 502 });
-      parsed = JSON.parse(fenced[0]) as RelayResponse;
+    if (!parsed && payload) {
+      parsed = payload as unknown as RelayResponse;
+    }
+
+    if (!parsed) {
+      return NextResponse.json(
+        {
+          error: "No model response text in relay payload.",
+          debug: {
+            upstreamStatus: res.status,
+            snippet: rawText.slice(0, 600),
+          },
+        },
+        { status: 502 },
+      );
     }
 
     const normalized = normalizeParsed(topic, words, parsed);
