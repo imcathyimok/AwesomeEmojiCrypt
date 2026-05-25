@@ -77,21 +77,52 @@ async function callRelayChatCompletions(
   });
 }
 
-type ChatCompletionPayload = {
-  choices?: Array<{
-    message?: {
-      content?: string | Array<{ text?: unknown }>;
-    };
-  }>;
-};
+type ChatCompletionPayload = Record<string, unknown>;
 
 function extractTextFromChatCompletionsPayload(payload: ChatCompletionPayload): string | null {
-  const content = payload.choices?.[0]?.message?.content;
-  if (typeof content === "string") return content;
+  const candidates: unknown[] = [
+    payload.text,
+    payload.output_text,
+    payload.message,
+    payload.content,
+    payload.response,
+    payload.output,
+    payload.choices,
+  ];
 
-  if (Array.isArray(content)) {
-    const textPart = content.find((part) => typeof part?.text === "string");
-    if (typeof textPart?.text === "string") return textPart.text;
+  const visited = new Set<unknown>();
+
+  const walk = (value: unknown): string | null => {
+    if (value == null || visited.has(value)) return null;
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (!trimmed) return null;
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) return trimmed;
+      return null;
+    }
+    if (typeof value !== "object") return null;
+    visited.add(value);
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const found = walk(item);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    const record = value as Record<string, unknown>;
+    for (const key of ["text", "content", "message", "output_text", "response", "output", "choices"]) {
+      const found = walk(record[key]);
+      if (found) return found;
+    }
+
+    return null;
+  };
+
+  for (const candidate of candidates) {
+    const found = walk(candidate);
+    if (found) return found;
   }
 
   return null;
