@@ -30,6 +30,16 @@ In each card flow:
 
 That “decode first, understand deeper second” pattern is the core learning experience.
 
+At first glance, **EmojiCrypt** looks like a fun, creative way to turn text into secure emoji codes. But if you look a little **underneath the surface**, the inspiration for this project comes from a much deeper place: **seeing a need** in how we learn, specifically for people with dyslexia.
+
+Traditional reading and vocabulary learning heavily rely on decoding abstract text, which can often feel overwhelming or frustrating for neurodiverse minds. This project was built to change that dynamic by introducing visual anchors.
+
+### Connecting the Dots for Dyslexia:
+* **Visual Anchors over Abstract Text:** Emojis provide an immediate, concrete visual reference. For someone struggling to process text characters, a vibrant icon bridges the gap between a word’s spelling and its actual meaning.
+* **Gamifying the Struggle:** By turning vocabulary building into a cryptographic puzzle, it removes the pressure of "traditional reading" and replaces it with a gamified, multi-sensory experience. It engages different pathways in the brain, helping with memory retention.
+* **Designing for Inclusivity:** True accessibility isn't just about screen readers; it’s about reimagining how we interact with language. 
+
+By hiding messages beneath a layer of emojis, **EmojiCrypt** playfully flips the script—inviting users to look closer, see the hidden needs of others, and make learning a more inclusive, joyful experience for everyone.
 ---
 
 ## What it does
