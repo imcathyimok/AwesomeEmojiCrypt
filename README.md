@@ -1,7 +1,4 @@
-<img width="1129" height="622" alt="image" src="https://github.com/user-attachments/assets/2f51aae6-fcea-4dce-b1b9-f79acf5b48d9" /># EmojiCrypt
-
 <img width="1673" height="793" alt="image" src="https://github.com/user-attachments/assets/cd72acd1-0038-4b11-9409-c5fc04047b64" />
-
 
 EmojiCrypt is a vocabulary-learning web app that turns word lists into emoji-based study cards.
 
