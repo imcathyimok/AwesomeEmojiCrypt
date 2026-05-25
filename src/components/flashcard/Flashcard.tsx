@@ -14,10 +14,9 @@ type FlashcardProps = {
   onMastered: () => void;
   onReview: () => void;
   onNext: () => void;
-  isLast: boolean;
 };
 
-export default function Flashcard({ word, state, onRequestHint, onRevealAnswer, onMastered, onReview, onNext, isLast }: FlashcardProps) {
+export default function Flashcard({ word, state, onRequestHint, onRevealAnswer, onMastered, onReview, onNext }: FlashcardProps) {
   const [activeEmoji, setActiveEmoji] = useState<string | null>(null);
 
   const safe = useMemo(

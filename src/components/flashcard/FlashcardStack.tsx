@@ -27,8 +27,6 @@ export default function FlashcardStack({ session }: { session: Session }) {
     return 2;
   }, [states, index]);
 
-  if (mode === "quiz") return <QuizMode session={session} />;
-
   const nextCard = () => {
     if (index + 1 >= session.words.length) {
       router.push(`/results/${session.id}`);
@@ -45,6 +43,8 @@ export default function FlashcardStack({ session }: { session: Session }) {
       nextCard();
     }, 350);
   };
+
+  if (mode === "quiz") return <QuizMode session={session} />;
 
   return (
     <div className="space-y-4">
@@ -87,7 +87,6 @@ export default function FlashcardStack({ session }: { session: Session }) {
           onMastered={() => markAndAdvance(true)}
           onReview={() => markAndAdvance(false)}
           onNext={nextCard}
-          isLast={index + 1 >= session.words.length}
         />
       )}
 

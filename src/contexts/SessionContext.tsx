@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Session, SessionHistoryItem, VocabWord } from "@/types";
 
 type SessionContextValue = {
@@ -30,43 +30,25 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [session, setSessionState] = useState<Session | null>(null);
   const [history, setHistory] = useState<SessionHistoryItem[]>([]);
 
-  const persistHistory = (items: SessionHistoryItem[]) => {
+  const persistHistory = useCallback((items: SessionHistoryItem[]) => {
     setHistory(items);
     if (typeof window !== "undefined") {
       localStorage.setItem(historyKey(), JSON.stringify(items));
     }
-  };
+  }, []);
 
-  const setSession = (nextSession: Session | null) => {
+  const setSession = useCallback((nextSession: Session | null) => {
     setSessionState(nextSession);
     if (typeof window !== "undefined") {
       if (nextSession) {
         sessionStorage.setItem("emojicrypt-session", JSON.stringify(nextSession));
         sessionStorage.setItem(sessionKey(nextSession.id), JSON.stringify(nextSession));
-        const existingArchived = localStorage.getItem(archiveKey(nextSession.id));
-        if (existingArchived) {
-          try {
-            const parsedExisting = JSON.parse(existingArchived) as Session;
-            const shouldKeepExisting = parsedExisting.words.length > nextSession.words.length;
-            if (!shouldKeepExisting) {
-              localStorage.setItem(archiveKey(nextSession.id), JSON.stringify(nextSession));
-            }
-          } catch {
-            localStorage.setItem(archiveKey(nextSession.id), JSON.stringify(nextSession));
-          }
-        } else {
-          localStorage.setItem(archiveKey(nextSession.id), JSON.stringify(nextSession));
-        }
+        localStorage.setItem(archiveKey(nextSession.id), JSON.stringify(nextSession));
 
         const raw = localStorage.getItem(historyKey());
         const existing = raw ? (JSON.parse(raw) as SessionHistoryItem[]) : [];
         const nextHistory = [
-          {
-            id: nextSession.id,
-            topic: nextSession.topic,
-            createdAt: nextSession.createdAt,
-            wordCount: nextSession.words.length,
-          },
+          { id: nextSession.id, topic: nextSession.topic, createdAt: nextSession.createdAt, wordCount: nextSession.words.length },
           ...existing.filter((item) => item.id !== nextSession.id),
         ].slice(0, 30);
 
@@ -75,13 +57,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         sessionStorage.removeItem("emojicrypt-session");
       }
     }
-  };
+  }, [persistHistory]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const rawHistory = localStorage.getItem(historyKey());
     if (!rawHistory) return;
-
     try {
       setHistory(JSON.parse(rawHistory) as SessionHistoryItem[]);
     } catch {
@@ -89,7 +70,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const updateWord = (index: number, partial: Partial<VocabWord>) => {
+  const updateWord = useCallback((index: number, partial: Partial<VocabWord>) => {
     setSessionState((prev) => {
       if (!prev) return prev;
       const words = [...prev.words];
@@ -101,9 +82,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       }
       return next;
     });
-  };
+  }, []);
 
-  const loadSessionById = (sessionId: string) => {
+  const loadSessionById = useCallback((sessionId: string) => {
     if (typeof window === "undefined") return null;
 
     const rawHistory = localStorage.getItem(historyKey());
@@ -131,9 +112,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } catch {
       return null;
     }
-  };
+  }, []);
 
-  const removeSessionFromHistory = (sessionId: string) => {
+  const removeSessionFromHistory = useCallback((sessionId: string) => {
     const next = history.filter((item) => item.id !== sessionId);
     persistHistory(next);
     if (typeof window !== "undefined") {
@@ -144,11 +125,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setSessionState(null);
       }
     }
-  };
+  }, [history, persistHistory, session]);
 
   const value = useMemo(
     () => ({ session, history, setSession, updateWord, loadSessionById, removeSessionFromHistory }),
-    [session, history],
+    [session, history, setSession, updateWord, loadSessionById, removeSessionFromHistory],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

@@ -8,7 +8,7 @@ import SessionHistoryPanel from "@/components/session/SessionHistoryPanel";
 
 export default function ResultsPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const { session, setSession } = useSession();
+  const { session } = useSession();
   const router = useRouter();
 
   const currentSession = useMemo(() => {
@@ -53,7 +53,7 @@ export default function ResultsPage() {
           </button>
         </div>
       </section>
-      <ExportMenu session={session} />
+      <ExportMenu session={currentSession} />
       <SessionHistoryPanel />
     </main>
   );
