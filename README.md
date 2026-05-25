@@ -1,112 +1,111 @@
-# 🔮 EmojiCrypt
+# EmojiCrypt
 
-### Beneath the Surface – Where words hide and emojis reveal.
+EmojiCrypt is a vocabulary-learning web app that turns word lists into emoji-based study cards.
 
-**EmojiCrypt** turns your boring vocabulary list into a deck of cryptic emoji puzzles. Every word becomes a visual riddle—a sequence of 3–5 emojis that somehow, magically, make sense when you crack the code. Built for the **"Beneath the Surface"** hackathon, because the best meanings aren't on the surface—they're waiting to be discovered.
-
----
-
-## 💡 The Idea
-
-Studying vocabulary is tedious. Flashcards are flat. But a string of emojis that secretly tells a story about a word? That’s sticky. That’s memorable. That’s what EmojiCrypt does.
-
-You type in a topic and a bunch of terms. Our AI generates:
-
-- 🧩 **An emoji sequence** (like `⚡🏭🔋`)
-- 📖 **A clear definition**
-- 💬 **An explanation** that decodes the emoji story
-
-Suddenly, “Mitochondria” isn’t just a word—it’s a power plant, a spark, a battery. The connection is visual, emotional, and impossible to forget.
+Built for the **Beneath the Surface** theme, the app is designed around one simple idea: learners first see a surface-level clue (emojis), then uncover deeper meaning (definition + explanation).
 
 ---
 
-## 🎮 How It Works
+## Why this project
 
-1. **Input** → Choose a topic and add words (type, upload, or paste).
-2. **Generate** → AI crafts emojis, definitions, and explanations.
-3. **Learn** → Swipe through interactive flashcards.  
-   See emojis → get a hint (the story) → flip to reveal the answer.
-4. **Master** → Mark words as mastered or review, then export to Anki, PDF, or share a link.
+Memorizing vocabulary with plain flashcards can feel repetitive, and words are easy to forget without strong associations.
 
----
+EmojiCrypt helps by combining:
 
-## ✨ Features That Make Studying a Game
+- visual clues (emojis),
+- short explanations,
+- and step-by-step reveal.
 
-- 🃏 **Progressive Reveal Flashcards** – Start with pure emojis, peel back layers.
-- 🕹️ **Three Study Modes**  
-  - *Emoji → Word* (classic decode)  
-  - *Word → Emoji* (quiz mode – pick the right emoji)  
-  - *Story Mode* (explanation first, then the reveal)
-- 💚 **Mastery Tracking** – Thumbs up/down on every card; re-study only what’s shaky.
-- 🌌 **Beneath the Surface Dark Theme** – Deep ocean gradients, neon glow, buttery card flips.
-- 📤 **Export Anywhere** – Anki deck (`.txt`), PDF, clipboard, or a shareable read-only link.
-- ⚡ **AI‑Powered Mnemonics** – Uses OpenAI to create *unique* emoji puzzles for any subject.
+This makes review more active and easier to remember.
 
 ---
 
-## 🧪 Try a Sample
+## Theme connection: Beneath the Surface
 
-**Topic**: Biology – Cell Organelles  
-**Word**: *Mitochondria*
+The theme is part of the product design, not just the title.
 
-| Emoji Code | Definition | Explanation |
-|------------|------------|-------------|
-| ⚡🏭🔋 | Powerhouse of the cell, produces ATP. | A power plant (🏭) generating electricity (⚡) stored in batteries (🔋) – just like mitochondria turn nutrients into energy. |
+In each card flow:
 
-That’s the kind of “aha!” moment EmojiCrypt delivers, for every word.
+1. You see emojis first (surface).
+2. You reveal hints and explanation.
+3. You connect symbols to the real meaning (beneath the surface).
 
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React · TypeScript · Tailwind CSS · Framer Motion
-- **Backend**: Next.js API routes (Node.js)
-- **AI**: OpenAI GPT‑4o / GPT‑3.5‑turbo
-- **State**: React Context + custom hooks
-- **Storage**: localStorage for offline resilience
+That “decode first, understand deeper second” pattern is the core learning experience.
 
 ---
 
-## 🚀 Quick Start
+## What it does
+
+Given a topic and list of words, EmojiCrypt generates for each word:
+
+- an emoji clue sequence,
+- a concise definition,
+- and an explanation of the clue.
+
+Then it presents the results in interactive study modes.
+
+---
+
+## Main features
+
+- **Topic + word input** (manual, paste, file import)
+- **AI generation** of emoji clues, definitions, and explanations
+- **Card-based learning flow**
+- **Multiple study modes** (flashcard / quiz / story)
+- **Session history + review workflow**
+
+---
+
+## How to use
+
+1. Enter a topic and vocabulary words.
+2. Generate a study session.
+3. Go through cards in your preferred mode.
+4. Reveal hint/answer and continue through the deck.
+5. Review results and practice again.
+
+---
+
+## Tech stack
+
+- Next.js (App Router)
+- React + TypeScript
+- Tailwind CSS
+- Next.js API route relay for model-based generation
+
+**Demo model:** Claude-Opus-4-5
+
+---
+
+## Quick start
 
 ```bash
-git clone https://github.com/your-username/emojicrypt.git
-cd emojicrypt
+git clone https://github.com/your-username/AwesomeEmojiCrypt.git
+cd AwesomeEmojiCrypt
 npm install
 ```
 
-Add your OpenAI API key to `.env.local`:
+Create `.env.local`:
 
-```
-OPENAI_API_KEY=sk-your-key-here
+```bash
+YINLI_API_KEY=your_key_here
+YINLI_API_URL=https://yinli.one/v1/chat/completions
+YINLI_MODEL=claude-opus-4-5-20251101
 ```
 
-Then run:
+Run locally:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and start memorizing.
-
-*(API key is used only server‑side and never exposed to the browser.)*
+Open `http://localhost:3000`.
 
 ---
 
-## 🤫 The Secret Sauce
+## Notes
 
-We wanted studying to feel less like work and more like solving a puzzle. The “Beneath the Surface” theme was a perfect metaphor: every emoji hides a deeper story, just like every vocabulary word carries a hidden network of meaning. EmojiCrypt doesn’t just show you definitions—it helps you *feel* the connections.
+- Keep `.env.local` private.
+- Do not commit `.next` or `node_modules`.
+- If deployment fails, run `npm run build` locally first to catch type/lint issues.
 
----
-
-## 🧩 Future Depths
-
-- Spaced repetition (SRS) built‑in
-- Community‑shared vocabulary packs
-- Offline generation with Web‑LLM
-- Multi‑language support (emojis transcend borders)
-
----
-
-**Made with ❤️, caffeine, and a love for emojis 🫧**  
-*Beneath the Surface Hackathon, 2026*
