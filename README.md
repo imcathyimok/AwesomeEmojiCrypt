@@ -110,3 +110,10 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+Video Demonstration : https://drive.google.com/file/d/1LnqHRa-KOBZOlqFVm2n1Yrh2u70zEhT_/view?usp=sharing
+
+**Have fun exploring the hidden meanings of the dull-looking vocabulary!**
+
+
+
